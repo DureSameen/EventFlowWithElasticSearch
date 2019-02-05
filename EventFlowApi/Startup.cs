@@ -8,7 +8,6 @@ using EventFlow.AspNetCore.Extensions;
 using EventFlow.AspNetCore.Middlewares;
 using EventFlow.Autofac.Extensions;
 using EventFlow.Configuration;
-using EventFlow.Elasticsearch.Extensions;
 using EventFlow.Extensions;
 using EventFlow.RabbitMQ;
 using EventFlow.RabbitMQ.Extensions;
@@ -23,12 +22,9 @@ using EventFlowApi.Core;
 using EventFlowApi.Core.Aggregates.Entities;
 using EventFlowApi.Core.Aggregates.Locator;
 using EventFlowApi.Core.Aggregates.Queries;
+using EventFlowApi.Core.ReadModels;
 using EventFlowApi.Infrastructure;
 using EventFlowApi.EventStore.Extensions;
-using EventFlowApi.Core.MetadataProviders;
-using EventFlowApi.ElasticSearch.ReadModels;
-using Microsoft.AspNetCore.HttpOverrides;
-using Nest;
 
 namespace EventFlowApi
 {
@@ -53,29 +49,17 @@ namespace EventFlowApi
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             ContainerBuilder containerBuilder = new ContainerBuilder();
             string rabbitMqConnection = Environment.GetEnvironmentVariable("RABBITMQCONNECTION");
-            string elasticSearchUrl = Environment.GetEnvironmentVariable("ELASTICSEARCHURL");  
-            Uri node = new Uri(elasticSearchUrl);
-            ConnectionSettings settings = new ConnectionSettings(node);
 
-            settings.DisableDirectStreaming();
-
-            ElasticClient elasticClient = new ElasticClient(settings);
             EventFlowOptions.New
                 .UseAutofacContainerBuilder(containerBuilder)
                 .AddDefaults(typeof(Employee).Assembly)
-                .ConfigureElasticsearch(() => elasticClient)
                 .ConfigureEventStore()
                 .PublishToRabbitMq(
                     RabbitMqConfiguration.With(new Uri(rabbitMqConnection),
                         true, 5, "eventflow"))
                 .RegisterServices(sr => sr.Register<IScopedContext, ScopedContext>(Lifetime.Scoped))
                 .RegisterServices(sr => sr.RegisterType(typeof(EmployeeLocator)))
-                .RegisterServices(sr => sr.Register<IScopedContext, ScopedContext>(Lifetime.Scoped))
-                .RegisterServices(sr => sr.RegisterType(typeof(EmployeeLocator)))
-                .UseElasticsearchReadModel<EmployeeReadModel, EmployeeLocator>()
-                .UseElasticsearchReadModel<TransactionReadModel, EmployeeLocator>()
-                
-                .AddAspNetCoreMetadataProviders();
+                 .AddAspNetCoreMetadataProviders();
 
             containerBuilder.Populate(services);
 
@@ -104,11 +88,6 @@ namespace EventFlowApi
             app.UseHttpsRedirection();
             app.UseMiddleware<CommandPublishMiddleware>();
             app.UseMvcWithDefaultRoute();
-            //app.UseForwardedHeaders(new ForwardedHeadersOptions
-            //{
-            //    ForwardedHeaders = ForwardedHeaders.XForwardedFor |
-            //                       ForwardedHeaders.XForwardedProto
-            //});
         }
     }
 }

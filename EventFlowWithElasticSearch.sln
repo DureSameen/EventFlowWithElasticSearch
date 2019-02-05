@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventFlowApi.EventStore", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventflowApi.Read", "EventflowApi.Read\EventflowApi.Read.csproj", "{05435CEE-0EA0-4F26-ADB7-1BA9A61EB618}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventFlow.RabbitMQ", "EventFlow.RabbitMQ\EventFlow.RabbitMQ\EventFlow.RabbitMQ.csproj", "{3C4D5708-16F4-47A1-AEFF-6700ABDC3E8E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{05435CEE-0EA0-4F26-ADB7-1BA9A61EB618}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05435CEE-0EA0-4F26-ADB7-1BA9A61EB618}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05435CEE-0EA0-4F26-ADB7-1BA9A61EB618}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C4D5708-16F4-47A1-AEFF-6700ABDC3E8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C4D5708-16F4-47A1-AEFF-6700ABDC3E8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C4D5708-16F4-47A1-AEFF-6700ABDC3E8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C4D5708-16F4-47A1-AEFF-6700ABDC3E8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

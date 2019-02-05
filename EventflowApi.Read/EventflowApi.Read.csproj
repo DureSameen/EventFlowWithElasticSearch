@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EventFlow.RabbitMQ\EventFlow.RabbitMQ\EventFlow.RabbitMQ.csproj" />
     <ProjectReference Include="..\EventFlowApi.ElasticSearch\EventFlowApi.ElasticSearch.csproj" />
   </ItemGroup>
 

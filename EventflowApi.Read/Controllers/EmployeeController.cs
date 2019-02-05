@@ -9,6 +9,7 @@ using EventFlow.Queries;
 using EventFlowApi.Core.Aggregates.Commands;
 using EventFlowApi.Core.Aggregates.Entities;
 using EventFlowApi.Core.Aggregates.Queries;
+using EventFlowApi.Core.ReadModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventflowApi.Read.Controllers
@@ -47,8 +48,8 @@ namespace EventflowApi.Read.Controllers
 
             var transactions = new List<TransactionResponse>();
 
-            if (transactionsReadModel != null) transactions.AddRange(transactionsReadModel.Select(transaction => new TransactionResponse(transaction.Date, transaction.Salary, transaction.TenantId)));
-            var response = new EmployeeResponse { TenantId = readModel.TenantId, Id = readModel.Id.GetGuid().ToString( ), FirstName = readModel.FirstName, LastName = readModel.LastName, Transactions= transactions };
+            if (transactionsReadModel != null) transactions.AddRange(transactionsReadModel.Select(transaction => new TransactionResponse(transaction.Date, transaction.Salary)));
+            var response = new EmployeeResponse { Id = readModel.Id.GetGuid().ToString( ), FirstName = readModel.FirstName, LastName = readModel.LastName, Transactions= transactions };
             return response;
         }
         ///// <summary>

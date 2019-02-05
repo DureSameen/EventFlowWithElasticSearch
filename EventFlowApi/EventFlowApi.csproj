@@ -10,7 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="EventFlow.Elasticsearch" Version="0.68.3728" />
     <PackageReference Include="EventFlow.RabbitMQ" Version="0.68.3728" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
 	<PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
@@ -20,7 +19,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EventFlowApi.Core\EventFlowApi.Core.csproj" />
-    <ProjectReference Include="..\EventFlowApi.ElasticSearch\EventFlowApi.ElasticSearch.csproj" />
     <ProjectReference Include="..\EventFlowApi.EventStore\EventFlowApi.EventStore.csproj" />
   </ItemGroup>
 

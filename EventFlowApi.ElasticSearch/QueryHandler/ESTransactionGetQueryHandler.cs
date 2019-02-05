@@ -7,7 +7,7 @@ using EventFlow.Elasticsearch.ValueObjects;
 using EventFlow.Queries;
 using EventFlowApi.Core.Aggregates.Entities;
 using EventFlowApi.Core.Aggregates.Queries;
-using EventFlowApi.ElasticSearch.ReadModels;
+using EventFlowApi.Core.ReadModels;
 using Nest;
 
 namespace EventFlowApi.ElasticSearch.QueryHandler
