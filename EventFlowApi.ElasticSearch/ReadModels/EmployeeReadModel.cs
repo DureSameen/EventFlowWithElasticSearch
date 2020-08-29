@@ -26,7 +26,7 @@ namespace EventFlowApi.ElasticSearch.ReadModels
 
         public Employee ToEmployee()
         {
-            return new Employee(EmployeeId.With(Id), FirstName, LastName, TenantId);
+            return new Employee(EmployeeId.With(Id), FirstName, LastName );
         }
     }
 }
