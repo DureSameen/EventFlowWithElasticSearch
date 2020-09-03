@@ -79,6 +79,7 @@ namespace EventFlowApi.Read
                 .AddAsynchronousSubscriber<EmployeeAggregate, EmployeeId, EmployeeAddedEvent, AddNewEmployeeSubscriber>()
                 .AddSubscribers (typeof(AllEventsSubscriber))
                 .Configure(c => c.IsAsynchronousSubscribersEnabled = true)
+                .Configure(c => c.ThrowSubscriberExceptions = true)
                 .SubscribeToRabbitMq(
                     RabbitMqConfiguration.With(new Uri(rabbitMqConnection),
                         true, 5, "eventflow"))
