@@ -25,6 +25,7 @@ using EventFlowApi.Core.Aggregates.Queries;
 using EventFlowApi.Core.ReadModels;
 using EventFlowApi.Infrastructure;
 using EventFlowApi.EventStore.Extensions;
+using Microsoft.OpenApi.Models;
 
 namespace EventFlowApi
 {
@@ -41,12 +42,12 @@ namespace EventFlowApi
         {
             services.AddSwaggerGen(x =>
             {
-                x.SwaggerDoc("v1", new Info { Title = "Eventflow Demo - API", Version = "v1" });
+                x.SwaggerDoc("v1", new OpenApiInfo { Title = "Eventflow Demo - API", Version = "v1" });
                 x.OperationFilter<SwaggerAuthorizationHeaderParameterOperationFilter>();
-                x.DescribeAllEnumsAsStrings();
+                 
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             ContainerBuilder containerBuilder = new ContainerBuilder();
             string rabbitMqConnection = Environment.GetEnvironmentVariable("RABBITMQCONNECTION");
 
@@ -59,16 +60,16 @@ namespace EventFlowApi
                         true, 5, "eventflow"))
                 .RegisterServices(sr => sr.Register<IScopedContext, ScopedContext>(Lifetime.Scoped))
                 .RegisterServices(sr => sr.RegisterType(typeof(EmployeeLocator)))
-                 .AddAspNetCoreMetadataProviders();
+                 .AddAspNetCore ();
 
             containerBuilder.Populate(services);
 
             return new AutofacServiceProvider(containerBuilder.Build());
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
-            if (env.IsDevelopment())
+            if (env.EnvironmentName=="Development")
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -87,7 +88,7 @@ namespace EventFlowApi
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             app.UseHttpsRedirection();
             app.UseMiddleware<CommandPublishMiddleware>();
-            app.UseMvcWithDefaultRoute();
+           
         }
     }
 }

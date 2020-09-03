@@ -75,7 +75,7 @@ namespace EventFlow.RabbitMQ.Integrations
 
         public RabbitMqMessage CreateMessage(BasicDeliverEventArgs  basicDeliverEvent)
         {
-            byte[] body = basicDeliverEvent.Body;
+            byte[] body = basicDeliverEvent.Body.ToArray();
             string serializedData = Encoding.UTF8.GetString(body);
 
              

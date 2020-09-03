@@ -52,10 +52,10 @@ namespace EventFlowApi.Read
             {
                 x.SwaggerDoc("v1", new OpenApiInfo { Title = "Read Api Eventflow Demo - API", Version = "v1" });
                 
-                x.DescribeAllEnumsAsStrings();
+                
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             string elasticSearchUrl = Environment.GetEnvironmentVariable("ELASTICSEARCHURL");
             ContainerBuilder containerBuilder = new ContainerBuilder();
@@ -84,7 +84,7 @@ namespace EventFlowApi.Read
                     RabbitMqConfiguration.With(new Uri(rabbitMqConnection),
                         true, 5, "eventflow"))
                 
-                .AddAspNetCoreMetadataProviders();
+                .AddAspNetCore ();
 
             containerBuilder.Populate(services);
             var container = containerBuilder.Build();
@@ -101,10 +101,10 @@ namespace EventFlowApi.Read
             return new AutofacServiceProvider(container);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
-           
-            if (env.IsDevelopment())
+
+            if (env.EnvironmentName == "Development")
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -123,7 +123,7 @@ namespace EventFlowApi.Read
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             app.UseHttpsRedirection();
             app.UseMiddleware<CommandPublishMiddleware>();
-            app.UseMvcWithDefaultRoute();
+             
            
         }
     }
