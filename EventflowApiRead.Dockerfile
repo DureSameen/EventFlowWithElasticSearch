@@ -11,7 +11,7 @@ RUN dotnet restore   EventflowApi.Read/EventflowApi.Read.csproj
 #ENV TEAMCITY_PROJECT_NAME=fake
 #RUN dotnet test tests/tests.csproj --verbosity=normal
 WORKDIR  /EventFlowWithElasticSearch/EventflowApi.Read 
-RUN dotnet publish EEventflowApi.Read.csproj-o /publish
+RUN dotnet publish EventflowApi.Read.csproj -o /publish
 # Runtime Image Stage
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-alpine   AS build
 WORKDIR /publish
