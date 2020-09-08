@@ -49,6 +49,8 @@ namespace EventFlow.RabbitMQ.Integrations
 
         public async Task<IRabbitConnection> CreateConnectionAsync(Uri uri, CancellationToken cancellationToken)
         {
+            _log.Verbose("Creating RabbitMQ connection factory to uri {0}", uri.ToString());
+
             var connectionFactory = await CreateConnectionFactoryAsync(uri, cancellationToken).ConfigureAwait(false);
             var connection = connectionFactory.CreateConnection();
 
