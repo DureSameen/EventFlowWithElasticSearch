@@ -106,7 +106,7 @@ services:
       context: .
       network: host
   writeapi:
-    image: localhost:57000/eventflow-with-elasticsearch-write:ci-6
+    image: localhost:57000/eventflow-with-elasticsearch-write:ci-7
     depends_on:
             - eventstore
             - rabbitmq
@@ -121,7 +121,7 @@ services:
       context: .
       network: host
   readapi:
-    image:  localhost:57000/eventflow-with-elasticsearch-read:ci-13
+    image:  localhost:57000/eventflow-with-elasticsearch-read:ci-14
     ports:
     - 8081:80 
     restart: on-failure
