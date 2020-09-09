@@ -7,17 +7,19 @@ services:
             - ./.docker/rabbitmq/etc/:/etc/rabbitmq/
             - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/
             - ./.docker/rabbitmq/logs/:/var/log/rabbitmq/
-        #environment:
-            #RABBITMQ_ERLANG_COOKIE: ${RABBITMQ_ERLANG_COOKIE}
-            #RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
-            #RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
         ports:
             - 5672:5672
             - 15672:15672
-        networks:
-          - elastic 
+        build:
+          context: .
+          network: host
         volumes:
          - ${DATA_PATH_HOST}/rabbitmq:/var/lib/rabbitmq/mnesia
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:15672"]
+            interval: 30s
+            timeout: 10s
+            retries: 5
   es01:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
     container_name: es01
@@ -28,6 +30,9 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    build: 
+      context: .
+      network: host 
     ulimits:
       memlock:
         soft: -1
@@ -36,8 +41,6 @@ services:
       - data01:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
-    networks:
-      - elastic
   es02:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
     container_name: es02
@@ -48,6 +51,9 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    build:
+      context: .
+      network: host
     ulimits:
       memlock:
         soft: -1
@@ -55,9 +61,7 @@ services:
     volumes:
       - data02:/usr/share/elasticsearch/data
     ports:
-      - 9201:9201
-    networks:
-      - elastic
+      - 9201:9201 
   es03:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
     container_name: es03
@@ -76,8 +80,9 @@ services:
       - data03:/usr/share/elasticsearch/data
     ports:
       - 9202:9202
-    networks:
-      - elastic
+    build:
+       context: .
+       network: host
   eventstore:
    image: krnissbrandt/eventstore-cluster-node-docker:latest
    env_file:
@@ -97,9 +102,11 @@ services:
   #    - "~/Data/eventstore/node1/db:/data/db"
   #    - "~/Data/eventstore/node1/logs:/data/logs"
    restart: always
-   network_mode: host
+   build:
+      context: .
+      network: host
   writeapi:
-    image: localhost:57000/eventflow-with-elasticsearch-write:ci-5
+    image: localhost:57000/eventflow-with-elasticsearch-write:ci-6
     depends_on:
             - eventstore
             - rabbitmq
@@ -110,23 +117,25 @@ services:
               - EVENTSTOREURL=tcp://admin:changeit@localhost:1113
     ports:
              - 8080:80
-    networks:
-          - elastic
-    
+    build:
+      context: .
+      network: host
   readapi:
-    image:  localhost:57000/eventflow-with-elasticsearch-read:ci-${GENERATOR_BUILD_NUMBER-12}
+    image:  localhost:57000/eventflow-with-elasticsearch-read:ci-13
     ports:
-    - 8081:80
+    - 8081:80 
+    restart: on-failure
     depends_on:
-        - eventstore
-        - rabbitmq
+            - eventstore
+            - rabbitmq 
     environment:
             - ASPNETCORE_ENVIRONMENT=Release
             - ELASTICSEARCHURL=http://localhost:9200
             - RABBITMQCONNECTION=amqp://guest:guest@localhost:5672
             - EVENTSTOREURL=tcp://admin:changeit@localhost:1113
-    networks:
-          - elastic  
+    build:
+      context: .
+      network: host
 volumes:
   data01:
     driver: local
@@ -134,6 +143,4 @@ volumes:
     driver: local
   data03:
     driver: local
-networks:
-  elastic:
-    driver: bridge
+ 
