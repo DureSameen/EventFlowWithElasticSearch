@@ -47,7 +47,8 @@ namespace EventFlowApi.Read
         public IConfiguration Configuration { get; }
         public IEventFlowOptions Options { get; set; }
         public IServiceProvider ConfigureServices(IServiceCollection services)
-        {
+        {   
+            services.AddControllers();
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc("v1", new OpenApiInfo { Title = "Read Api Eventflow Demo - API", Version = "v1" });
@@ -123,7 +124,11 @@ namespace EventFlowApi.Read
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             app.UseHttpsRedirection();
             app.UseMiddleware<CommandPublishMiddleware>();
-             
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+                    {
+                        endpoints.MapControllers();
+                    });
            
         }
     }

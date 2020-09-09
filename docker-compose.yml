@@ -113,7 +113,7 @@ services:
     environment:
               - ASPNETCORE_ENVIRONMENT=Release
               - ELASTICSEARCHURL=http://localhost:9200  
-              - RABBITMQCONNECTION=amqp://guest:guest@localhost:5672
+              - RABBITMQCONNECTION=amqp://guest:guest@localhost:5672/
               - EVENTSTOREURL=tcp://admin:changeit@localhost:1113
     ports:
              - 8080:80
@@ -121,7 +121,7 @@ services:
       context: .
       network: host
   readapi:
-    image:  localhost:57000/eventflow-with-elasticsearch-read:ci-14
+    image:  localhost:57000/eventflow-with-elasticsearch-read:ci-15
     ports:
     - 8081:80 
     restart: on-failure
@@ -131,7 +131,7 @@ services:
     environment:
             - ASPNETCORE_ENVIRONMENT=Release
             - ELASTICSEARCHURL=http://localhost:9200
-            - RABBITMQCONNECTION=amqp://guest:guest@localhost:5672
+            - RABBITMQCONNECTION=amqp://guest:guest@localhost:5672/
             - EVENTSTOREURL=tcp://admin:changeit@localhost:1113
     build:
       context: .

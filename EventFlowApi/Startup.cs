@@ -39,7 +39,7 @@ namespace EventFlowApi
         public IConfiguration Configuration { get; }
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
-        {
+        {   services.AddControllers();
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc("v1", new OpenApiInfo { Title = "Eventflow Demo - API", Version = "v1" });
@@ -88,7 +88,11 @@ namespace EventFlowApi
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             app.UseHttpsRedirection();
             app.UseMiddleware<CommandPublishMiddleware>();
-           
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+                    {
+                        endpoints.MapControllers();
+                    });
         }
     }
 }
