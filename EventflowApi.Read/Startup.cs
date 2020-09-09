@@ -102,7 +102,7 @@ namespace EventFlowApi.Read
             return new AutofacServiceProvider(container);
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env )
         {
 
             if (env.EnvironmentName == "Development")

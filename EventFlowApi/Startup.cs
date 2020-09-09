@@ -67,7 +67,7 @@ namespace EventFlowApi
             return new AutofacServiceProvider(containerBuilder.Build());
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env )
         {
             if (env.EnvironmentName=="Development")
             {

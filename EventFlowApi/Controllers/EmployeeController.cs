@@ -58,7 +58,7 @@ namespace EventFlowApi.Controllers
         /// <param name="request">create employee request</param>
         /// <returns>employeeid</returns>
         [HttpPost]
-        public async Task<EmployeeId> Post(CreateEmployeeRequest request)
+        public async Task<ActionResult<CreateEmployeeRequest>> Post(CreateEmployeeRequest request)
         {
             var id = Guid.NewGuid().ToString();
             var employeeId = new EmployeeId("employee-" + id);
@@ -66,8 +66,9 @@ namespace EventFlowApi.Controllers
             var employeeCommand = new EmployeeAddCommand(employeeId, employeeRecord);
 
             await CommandBus.PublishAsync(employeeCommand, CancellationToken.None).ConfigureAwait(false);
-
-            return employeeId;
+            
+            return CreatedAtAction(nameof(request), new { id = employeeId }, request);
+            
            
         }
     }
