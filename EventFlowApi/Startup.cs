@@ -85,8 +85,7 @@ namespace EventFlowApi
 
             });
 
-            app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-            app.UseHttpsRedirection();
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()); 
             app.UseMiddleware<CommandPublishMiddleware>();
             app.UseRouting();
             app.UseEndpoints(endpoints =>
