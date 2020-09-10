@@ -54,7 +54,7 @@ namespace EventFlowApi
             EventFlowOptions.New
                 .UseAutofacContainerBuilder(containerBuilder)
                 .AddDefaults(typeof(Employee).Assembly)
-                .ConfigureEventStore()
+                //.ConfigureEventStore()
                 .PublishToRabbitMq(
                     RabbitMqConfiguration.With(new Uri(rabbitMqConnection),
                         true, 5, "eventflow"))
