@@ -12,7 +12,7 @@ services:
         image: aspnetcore/teamcity-agent-with-compose:2017.1.4
         build: ./agent
         environment:
-            SERVER_URL: http://teamcity:8111
+            - SERVER_URL: http://teamcity:8111
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
 
