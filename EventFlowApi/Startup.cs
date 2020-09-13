@@ -50,15 +50,25 @@ namespace EventFlowApi
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             ContainerBuilder containerBuilder = new ContainerBuilder();
             string rabbitMqConnection = Environment.GetEnvironmentVariable("RABBITMQCONNECTION");
+             string elasticSearchUrl = Environment.GetEnvironmentVariable("ELASTICSEARCHURL");
+            ContainerBuilder containerBuilder = new ContainerBuilder();
+            Uri node = new Uri(elasticSearchUrl);
+            ConnectionSettings settings = new ConnectionSettings(node);
 
+            settings.DisableDirectStreaming();
+
+            ElasticClient elasticClient = new ElasticClient(settings);
             EventFlowOptions.New
                 .UseAutofacContainerBuilder(containerBuilder)
                 .AddDefaults(typeof(Employee).Assembly)
-                //.ConfigureEventStore()
+                .ConfigureEventStore()
+                .ConfigureElasticsearch(() => elasticClient)
                 .PublishToRabbitMq(
                     RabbitMqConfiguration.With(new Uri(rabbitMqConnection),
                         true, 5, "eventflow"))
                 .RegisterServices(sr => sr.Register<IScopedContext, ScopedContext>(Lifetime.Scoped))
+                .UseElasticsearchReadModel<EmployeeReadModel, EmployeeLocator>()
+                .UseElasticsearchReadModel<TransactionReadModel, EmployeeLocator>()
                 .RegisterServices(sr => sr.RegisterType(typeof(EmployeeLocator)))
                  .AddAspNetCore ();
 
