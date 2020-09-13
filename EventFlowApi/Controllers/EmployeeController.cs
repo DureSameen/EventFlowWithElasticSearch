@@ -58,7 +58,7 @@ namespace EventFlowApi.Controllers
         /// <param name="request">create employee request</param>
         /// <returns>employeeid</returns>
         [HttpPost]
-        public async Task<EmployeeId> Post(CreateEmployeeRequest request, ApiVersion version)
+        public async Task<EmployeeId> Post(CreateEmployeeRequest request)
         {
             var id = Guid.NewGuid().ToString();
             var employeeId = new EmployeeId("employee-" + id);
