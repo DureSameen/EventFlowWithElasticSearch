@@ -41,7 +41,7 @@ namespace EventFlowApi.ElasticSearch.Index
 
             if (!IndexExists(indexName, client))
             {
-                var createIndexResponse = client.CreateIndex(indexName);
+                var createIndexResponse = client.Indices.Create (indexName);
                                                              
    
                 if (!createIndexResponse.ApiCall.Success)
@@ -53,7 +53,7 @@ namespace EventFlowApi.ElasticSearch.Index
 
             private bool IndexExists(string name, IElasticClient client)
             {
-                var aliasResponse = client.IndexExists (name);
+                var aliasResponse = client.Indices.Exists  (name);
 
                 return aliasResponse.Exists;
 
