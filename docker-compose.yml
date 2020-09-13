@@ -22,7 +22,7 @@ services:
             timeout: 10s
             retries: 5
    writeapi:
-        image: localhost:57000/eventflow-with-elasticsearch-write:ci-6
+        image: localhost:57000/eventflow-with-elasticsearch-write:ci-8
         depends_on: 
                 - rabbitmq 
         environment:
@@ -37,7 +37,7 @@ services:
         networks:
             - elastic
    readapi:
-        image:  localhost:57000/eventflow-with-elasticsearch-read:ci-11
+        image:  localhost:57000/eventflow-with-elasticsearch-read:ci-13
         ports:
         - 8081:80 
         restart: on-failure

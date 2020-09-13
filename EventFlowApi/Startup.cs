@@ -26,6 +26,8 @@ using EventFlowApi.Core.ReadModels;
 using EventFlowApi.Infrastructure;
 using EventFlowApi.EventStore.Extensions;
 using Microsoft.OpenApi.Models;
+using Nest;
+using EventFlow.Elasticsearch.Extensions;
 
 namespace EventFlowApi
 {
@@ -51,7 +53,7 @@ namespace EventFlowApi
             ContainerBuilder containerBuilder = new ContainerBuilder();
             string rabbitMqConnection = Environment.GetEnvironmentVariable("RABBITMQCONNECTION");
              string elasticSearchUrl = Environment.GetEnvironmentVariable("ELASTICSEARCHURL");
-            ContainerBuilder containerBuilder = new ContainerBuilder();
+ 
             Uri node = new Uri(elasticSearchUrl);
             ConnectionSettings settings = new ConnectionSettings(node);
 

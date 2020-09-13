@@ -10,12 +10,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="NEST" Version="7.9.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\EventFlow.RabbitMQ\EventFlow.RabbitMQ\EventFlow.RabbitMQ.csproj" />
     <ProjectReference Include="..\EventFlowApi.Core\EventFlowApi.Core.csproj" />
+    <ProjectReference Include="..\EventFlowApi.ElasticSearch\EventFlowApi.ElasticSearch.csproj" />
     <ProjectReference Include="..\EventFlowApi.EventStore\EventFlowApi.EventStore.csproj" />
   </ItemGroup>
 
