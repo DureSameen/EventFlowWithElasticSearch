@@ -6,7 +6,7 @@ using EventFlowApi.Core.Aggregates.Events;
 using Nest;
 
 namespace EventFlowApi.ElasticSearch.ReadModels
-{    
+{ 
     public class EmployeeReadModel : IReadModel, IAmReadModelFor<EmployeeAggregate, EmployeeId, EmployeeAddedEvent>
     {
         [Keyword(

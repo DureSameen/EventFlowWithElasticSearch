@@ -33,7 +33,7 @@ using EventFlowApi.Core.Aggregates.Queries;
 using EventFlowApi.Core.ReadModels;
 using EventFlowApi.ElasticSearch.QueryHandler;
 using Microsoft.OpenApi.Models;
-
+using EventFlowApi.ElasticSearch.Index;
 
 namespace EventFlowApi.Read
 {
@@ -75,7 +75,8 @@ namespace EventFlowApi.Read
                 .RegisterServices(sr => sr.Register<IScopedContext, ScopedContext>(Lifetime.Scoped))
                 .RegisterServices(sr => sr.RegisterType(typeof(EmployeeLocator)))
                 .UseElasticsearchReadModel<EmployeeReadModel, EmployeeLocator>()
-                .UseElasticsearchReadModel<TransactionReadModel, EmployeeLocator>()
+                .RegisterServices(sr => sr.RegisterType(typeof(TransactionLocator)))
+                .UseElasticsearchReadModel<TransactionReadModel, TransactionLocator>()
                 .AddQueryHandlers(typeof(ESTransactionGetQueryHandler), typeof(ESEmployeeGetQueryHandler))
                 .AddAsynchronousSubscriber<EmployeeAggregate, EmployeeId, EmployeeAddedEvent, AddNewEmployeeSubscriber>()
                 .AddSubscribers (typeof(AllEventsSubscriber))
@@ -98,7 +99,10 @@ namespace EventFlowApi.Read
                 subscriber.SubscribeAsync(configuration.Exchange, configuration.Exchange + "Queue", EventFlowOptionsRabbitMqExtensions.Listen,
                     domainEventPublisher, cancellationToken: CancellationToken.None).Wait();
             }
-          
+           
+            var _tenantIndex = new ElasticSearchIndex(elasticSearchUrl);
+            _tenantIndex.CreateIndex("employeeIndex", elasticSearchUrl);
+            services.AddSingleton(_tenantIndex.ElasticClient);
             return new AutofacServiceProvider(container);
         }
 

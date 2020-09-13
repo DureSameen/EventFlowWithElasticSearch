@@ -28,6 +28,7 @@ using EventFlowApi.EventStore.Extensions;
 using Microsoft.OpenApi.Models;
 using Nest;
 using EventFlow.Elasticsearch.Extensions;
+using EventFlowApi.ElasticSearch.Index;
 
 namespace EventFlowApi
 {
@@ -69,13 +70,16 @@ namespace EventFlowApi
                     RabbitMqConfiguration.With(new Uri(rabbitMqConnection),
                         true, 5, "eventflow"))
                 .RegisterServices(sr => sr.Register<IScopedContext, ScopedContext>(Lifetime.Scoped))
-                .UseElasticsearchReadModel<EmployeeReadModel, EmployeeLocator>()
-                .UseElasticsearchReadModel<TransactionReadModel, EmployeeLocator>()
                 .RegisterServices(sr => sr.RegisterType(typeof(EmployeeLocator)))
+                .UseElasticsearchReadModel<EmployeeReadModel, EmployeeLocator>()
+                .RegisterServices(sr => sr.RegisterType(typeof(TransactionLocator)))
+                .UseElasticsearchReadModel<TransactionReadModel, TransactionLocator>()
                  .AddAspNetCore ();
 
             containerBuilder.Populate(services);
-
+            var _tenantIndex = new ElasticSearchIndex(elasticSearchUrl);
+            _tenantIndex.CreateIndex("employeeIndex", elasticSearchUrl);
+            services.AddSingleton(_tenantIndex.ElasticClient);
             return new AutofacServiceProvider(containerBuilder.Build());
         }
 

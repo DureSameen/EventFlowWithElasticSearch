@@ -5,7 +5,7 @@ using EventFlowApi.Core.Aggregates.Events;
 
 namespace EventFlowApi.Core.Aggregates.Locator
 {
-    public class EmployeeLocator : IReadModelLocator
+    public class TransactionLocator : IReadModelLocator
     {
         public IEnumerable<string> GetReadModelIds(IDomainEvent domainEvent)
         {
@@ -13,12 +13,10 @@ namespace EventFlowApi.Core.Aggregates.Locator
 
             switch (aggregateEvent)
             {
-              
-                case EmployeeAddedEvent employeeRecordAddedEvent:
-                    yield return employeeRecordAddedEvent.EmployeeRecord.Id.Value;
+
+                case TransactionAddedEvent transactionRecordAddedEvent:
+                    yield return transactionRecordAddedEvent.Transaction.Id.Value;
                     break;
-
-
 
             }
         }
