@@ -63,7 +63,7 @@ namespace EventFlowApi
             EventFlowOptions.New
                 .UseAutofacContainerBuilder(containerBuilder)
                 .AddDefaults(typeof(Employee).Assembly)
-                .ConfigureEventStore()
+                //.ConfigureEventStore()
                 .ConfigureElasticsearch(() => elasticClient)
                 .PublishToRabbitMq(
                     RabbitMqConfiguration.With(new Uri(rabbitMqConnection),
