@@ -79,15 +79,7 @@ namespace EventFlowApi
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env )
         {
-            if (env.EnvironmentName=="Development")
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseHsts();
-            }
-
+            app.UseDeveloperExceptionPage(); 
             app.UseSwagger();
             app.UseSwaggerUI(x =>
             {
