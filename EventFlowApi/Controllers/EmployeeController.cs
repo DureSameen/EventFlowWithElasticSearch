@@ -16,7 +16,7 @@ namespace EventFlowApi.Controllers
 {
     /// <summary>Employee api, collection of all related operations</summary>
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController] 
     public class EmployeeController : BaseController
     {
         /// <summary>employee api cons.</summary>
@@ -58,7 +58,7 @@ namespace EventFlowApi.Controllers
         /// <param name="request">create employee request</param>
         /// <returns>employeeid</returns>
         [HttpPost]
-        public async Task<ActionResult<CreateEmployeeRequest>> Post(CreateEmployeeRequest request)
+        public async Task<EmployeeId> Post(CreateEmployeeRequest request, ApiVersion version)
         {
             var id = Guid.NewGuid().ToString();
             var employeeId = new EmployeeId("employee-" + id);
@@ -67,7 +67,7 @@ namespace EventFlowApi.Controllers
 
             await CommandBus.PublishAsync(employeeCommand, CancellationToken.None).ConfigureAwait(false);
             
-            return CreatedAtAction(nameof(request), new { id = employeeId }, request);
+            return  employeeId;
             
            
         }

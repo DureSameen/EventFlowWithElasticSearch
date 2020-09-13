@@ -37,7 +37,7 @@ services:
         networks:
             - elastic
    readapi:
-        image:  localhost:57000/eventflow-with-elasticsearch-read:ci-1
+        image:  localhost:57000/eventflow-with-elasticsearch-read:ci-7
         ports:
         - 8081:80 
         restart: on-failure
