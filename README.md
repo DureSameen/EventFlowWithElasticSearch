@@ -8,5 +8,19 @@ EventFlowApi : It is write api . Configured with EventFlow , ElasticSearch, Even
 
 EventFlowApi.Read: It is read api, it get ElasticSearch query handler and get the data from it.
 
+
+Prerequisites :
+
+1.  download and install Aspnetcore 3.1 framework.
+2.  Set following environment variables
+   
+    ASPNETCORE_ENVIRONMENT
+    ELASTICSEARCHURL
+    EVENTSTOREURL 
+    RABBITMQCONNECTION
+  
+    
+
+
  
 
