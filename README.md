@@ -14,9 +14,9 @@ Prerequisites :
 1.  download and install Aspnetcore 3.1 framework.
 2.  Set following environment variables
    
-    ASPNETCORE_ENVIRONMENT
-    ELASTICSEARCHURL
-    EVENTSTOREURL 
+    ASPNETCORE_ENVIRONMENT, 
+    ELASTICSEARCHURL, 
+    EVENTSTOREURL,
     RABBITMQCONNECTION
   
     
