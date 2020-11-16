@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2043
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30503.244
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventFlowApi.Core", "EventFlowApi.Core\EventFlowApi.Core.csproj", "{7FD074F0-2C45-489A-B827-307736B70622}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventflowApi.Read", "EventflowApi.Read\EventflowApi.Read.csproj", "{05435CEE-0EA0-4F26-ADB7-1BA9A61EB618}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventFlow.RabbitMQ", "EventFlow.RabbitMQ\EventFlow.RabbitMQ\EventFlow.RabbitMQ.csproj", "{3C4D5708-16F4-47A1-AEFF-6700ABDC3E8E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{FAE64FE6-0152-4CA0-BDC4-F94DB0F652D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,6 +50,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B7110CD2-712F-461A-9C9E-B1148866671F} = {FAE64FE6-0152-4CA0-BDC4-F94DB0F652D2}
+		{05435CEE-0EA0-4F26-ADB7-1BA9A61EB618} = {FAE64FE6-0152-4CA0-BDC4-F94DB0F652D2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3C366A15-31AE-40BE-8F9A-13CB89869F78}

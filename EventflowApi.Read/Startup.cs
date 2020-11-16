@@ -101,7 +101,7 @@ namespace EventFlowApi.Read
             }
            
             var _tenantIndex = new ElasticSearchIndex(elasticSearchUrl);
-            _tenantIndex.CreateIndex("employeeIndex", elasticSearchUrl);
+            _tenantIndex.CreateIndex("employeeindex", elasticSearchUrl);
             services.AddSingleton(_tenantIndex.ElasticClient);
             return new AutofacServiceProvider(container);
         }

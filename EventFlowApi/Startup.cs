@@ -64,7 +64,7 @@ namespace EventFlowApi
             EventFlowOptions.New
                 .UseAutofacContainerBuilder(containerBuilder)
                 .AddDefaults(typeof(Employee).Assembly)
-                //.ConfigureEventStore()
+                .ConfigureEventStore()
                 .ConfigureElasticsearch(() => elasticClient)
                 .PublishToRabbitMq(
                     RabbitMqConfiguration.With(new Uri(rabbitMqConnection),
@@ -78,7 +78,7 @@ namespace EventFlowApi
 
             containerBuilder.Populate(services);
             var _tenantIndex = new ElasticSearchIndex(elasticSearchUrl);
-            _tenantIndex.CreateIndex("employeeIndex", elasticSearchUrl);
+            _tenantIndex.CreateIndex("employeeindex", elasticSearchUrl);
             services.AddSingleton(_tenantIndex.ElasticClient);
             return new AutofacServiceProvider(containerBuilder.Build());
         }
