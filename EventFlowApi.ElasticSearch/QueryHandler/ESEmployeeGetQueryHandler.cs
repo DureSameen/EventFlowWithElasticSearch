@@ -6,7 +6,7 @@ using EventFlow.Elasticsearch.ValueObjects;
 using EventFlow.Queries;
 using EventFlowApi.Core.Aggregates.Entities;
 using EventFlowApi.Core.Aggregates.Queries;
-using EventFlowApi.ElasticSearch.ReadModels;
+using EventFlowApi.Core.ReadModels;
 using Nest;
 
 namespace EventFlowApi.ElasticSearch.QueryHandler
@@ -27,11 +27,11 @@ namespace EventFlowApi.ElasticSearch.QueryHandler
             ReadModelDescription readModelDescription = _readModelDescriptionProvider.GetReadModelDescription<EmployeeReadModel>();
             string indexName = "eventflow-" + readModelDescription.IndexName.Value;
 
-            await _elasticClient.FlushAsync(indexName, 
+            await _elasticClient.Indices.FlushAsync(indexName,
                     d => d.RequestConfiguration(c => c.AllowedStatusCodes((int)HttpStatusCode.NotFound)), cancellationToken)
                     .ConfigureAwait(false);
 
-            await _elasticClient.RefreshAsync(indexName, 
+            await _elasticClient.Indices.RefreshAsync(indexName,
                     d => d.RequestConfiguration(c => c.AllowedStatusCodes((int)HttpStatusCode.NotFound)), cancellationToken)
                     .ConfigureAwait(false);
 

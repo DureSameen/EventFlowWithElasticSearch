@@ -6,7 +6,7 @@ using EventFlowApi.Core.Aggregates.Events;
 using Nest;
 
 namespace EventFlowApi.ElasticSearch.ReadModels
-{    
+{ 
     public class EmployeeReadModel : IReadModel, IAmReadModelFor<EmployeeAggregate, EmployeeId, EmployeeAddedEvent>
     {
         [Keyword(
@@ -26,7 +26,7 @@ namespace EventFlowApi.ElasticSearch.ReadModels
 
         public Employee ToEmployee()
         {
-            return new Employee(EmployeeId.With(Id), FirstName, LastName, TenantId);
+            return new Employee(EmployeeId.With(Id), FirstName, LastName );
         }
     }
 }

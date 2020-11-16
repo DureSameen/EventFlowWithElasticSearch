@@ -1,0 +1,57 @@
+﻿version: '3.4' 
+services:
+   rabbitmq:
+        image: rabbitmq:3-management-alpine
+        container_name: rabbitmq
+        volumes:
+            - ./.docker/rabbitmq/etc/:/etc/rabbitmq/
+            - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/
+            - ./.docker/rabbitmq/logs/:/var/log/rabbitmq/
+        ports:
+            - 5672:5672
+            - 15672:15672
+        build:
+          context: .
+        networks:
+             - elastic
+        volumes:
+         - ${DATA_PATH_HOST}/rabbitmq:/var/lib/rabbitmq/mnesia
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:15672"]
+            interval: 30s
+            timeout: 10s
+            retries: 5
+   writeapi:
+        image: localhost:57000/eventflow-with-elasticsearch-write:ci-10
+        depends_on: 
+                - rabbitmq 
+        environment:
+                  - ASPNETCORE_ENVIRONMENT=Release
+                  - ELASTICSEARCHURL=http://localhost:9200  
+                  - RABBITMQCONNECTION=amqp://guest:guest@rabbitmq:5672/
+                  - EVENTSTOREURL=tcp://admin:changeit@localhost:1113
+        ports:
+                 - 8080:80
+        build:
+          context: .
+        networks:
+            - elastic
+   readapi:
+        image:  localhost:57000/eventflow-with-elasticsearch-read:ci-15
+        ports:
+        - 8081:80 
+        restart: on-failure
+        depends_on: 
+                - rabbitmq 
+        environment:
+                - ASPNETCORE_ENVIRONMENT=Release
+                - ELASTICSEARCHURL=http://localhost:9200
+                - RABBITMQCONNECTION=amqp://guest:guest@rabbitmq:5672/
+                - EVENTSTOREURL=tcp://admin:changeit@localhost:1113
+        build:
+          context: .
+        networks:
+            - elastic 
+networks:
+  elastic:
+    driver: bridge

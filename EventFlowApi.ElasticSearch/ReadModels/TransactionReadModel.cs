@@ -30,7 +30,7 @@ namespace EventFlowApi.ElasticSearch.ReadModels
 
         public Transaction ToTransaction()
         {
-            return new Transaction(EmployeeId, new TransactionId(TransactionId), Date, Salary, TenantId);;
+            return new Transaction(EmployeeId, new TransactionId(TransactionId), Date, Salary );;
         }
     }
 }

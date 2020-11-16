@@ -5,12 +5,11 @@ namespace EventFlowApi.Core.Aggregates.Entities
 {
     public class Transaction : Entity<TransactionId>
     {
-        public string TenantId { get;  }
-        public string EmployeeId { get;  }
-        public DateTime Date { get;   }
-        public double Salary { get;   }
+        public string EmployeeId { get; set; }
+        public DateTime Date { get; set; }
+        public double Salary { get; set; }
 
-        public Transaction(string employeeId, TransactionId id, DateTime date, double salary, string tenantId)
+        public Transaction(string employeeId, TransactionId id, DateTime date, double salary)
             : base(id)
         {
             if (salary <= 0 ) throw new ArgumentNullException(nameof(salary));
@@ -18,7 +17,6 @@ namespace EventFlowApi.Core.Aggregates.Entities
             Date = date;
             Salary = salary;
             EmployeeId = employeeId;
-            TenantId = tenantId;
         }
     }
 }

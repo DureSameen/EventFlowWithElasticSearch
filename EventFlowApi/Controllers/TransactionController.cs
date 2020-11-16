@@ -35,7 +35,7 @@ namespace EventFlowApi.Controllers
 
             var id = Guid.NewGuid().ToString();
             var transactionId = new TransactionId("transaction-" + id);
-            var transactionRecord = new Transaction(request.EmployeeId, transactionId, request.Date, request.Salary ,"");
+            var transactionRecord = new Transaction(request.EmployeeId, transactionId, request.Date, request.Salary);
             var transactionCommand = new TransactionAddCommand(transactionId, transactionRecord);
 
             await CommandBus.PublishAsync(transactionCommand, CancellationToken.None).ConfigureAwait(false);

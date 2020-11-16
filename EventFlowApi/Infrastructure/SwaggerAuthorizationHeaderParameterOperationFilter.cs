@@ -1,24 +1,39 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EventFlowApi.Infrastructure
 {
     public class SwaggerAuthorizationHeaderParameterOperationFilter : IOperationFilter
     {
-        public void Apply(Operation operation, OperationFilterContext context)
+        public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
-            operation.Parameters?.Add(new NonBodyParameter
+
+
+            var requiredScopes = context.MethodInfo.DeclaringType.GetCustomAttributes(true)
+                     .OfType<AuthorizeAttribute>()
+                     .Select(attr => attr.Policy)
+                     .Distinct();
+
+            if (requiredScopes.Any())
             {
-                Name = "Authorization",
-                In = "header",
-                Description = "Access Token",
-                Required = false,
-                Type = "string"
-            });
+
+                var oAuthScheme = new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
+                };
+
+                operation.Security = new List<OpenApiSecurityRequirement>
+             {
+                 new OpenApiSecurityRequirement
+                 {
+                     [ oAuthScheme ] = requiredScopes.ToList()
+                 }
+             };
+
+            }
         }
     }
 }

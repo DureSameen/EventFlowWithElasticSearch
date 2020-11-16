@@ -1,5 +1,11 @@
-﻿using Autofac;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using EventflowApi.Read.Subscribers;
 using EventFlow;
 using EventFlow.AspNetCore.Extensions;
 using EventFlow.AspNetCore.Middlewares;
@@ -7,21 +13,27 @@ using EventFlow.Autofac.Extensions;
 using EventFlow.Configuration;
 using EventFlow.Elasticsearch.Extensions;
 using EventFlow.Extensions;
-using EventFlowApi.Core.Aggregates.Entities;
-using EventFlowApi.Core.Aggregates.Locator;
-using EventFlowApi.Core.Aggregates.Queries;
-using EventFlowApi.ElasticSearch.QueryHandler;
+using EventFlow.RabbitMQ;
+using EventFlow.RabbitMQ.Extensions;
+using EventFlow.RabbitMQ.Integrations;
+using EventFlow.Subscribers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
 using Nest;
-using System;
-using EventFlowApi.ElasticSearch.ReadModels;
-
+using Swashbuckle.AspNetCore.Swagger;
+using EventFlowApi.Core;
+using EventFlowApi.Core.Aggregates.Entities;
+using EventFlowApi.Core.Aggregates.Events;
+using EventFlowApi.Core.Aggregates.Locator;
+using EventFlowApi.Core.Aggregates.Queries;
+using EventFlowApi.Core.ReadModels;
+using EventFlowApi.ElasticSearch.QueryHandler;
+using Microsoft.OpenApi.Models;
+using EventFlowApi.ElasticSearch.Index;
 
 namespace EventFlowApi.Read
 {
@@ -35,15 +47,16 @@ namespace EventFlowApi.Read
         public IConfiguration Configuration { get; }
         public IEventFlowOptions Options { get; set; }
         public IServiceProvider ConfigureServices(IServiceCollection services)
-        {
+        {   
+            services.AddControllers();
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc("v1", new OpenApiInfo { Title = "Read Api Eventflow Demo - API", Version = "v1" });
                 
-                x.DescribeAllEnumsAsStrings();
+                
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             string elasticSearchUrl = Environment.GetEnvironmentVariable("ELASTICSEARCHURL");
             ContainerBuilder containerBuilder = new ContainerBuilder();
@@ -62,30 +75,41 @@ namespace EventFlowApi.Read
                 .RegisterServices(sr => sr.Register<IScopedContext, ScopedContext>(Lifetime.Scoped))
                 .RegisterServices(sr => sr.RegisterType(typeof(EmployeeLocator)))
                 .UseElasticsearchReadModel<EmployeeReadModel, EmployeeLocator>()
-                .UseElasticsearchReadModel<TransactionReadModel, EmployeeLocator>()
-                .AddQueryHandlers(typeof(ESTransactionGetQueryHandler), typeof(ESEmployeeGetQueryHandler)) 
+                .RegisterServices(sr => sr.RegisterType(typeof(TransactionLocator)))
+                .UseElasticsearchReadModel<TransactionReadModel, TransactionLocator>()
+                .AddQueryHandlers(typeof(ESTransactionGetQueryHandler), typeof(ESEmployeeGetQueryHandler))
+                .AddAsynchronousSubscriber<EmployeeAggregate, EmployeeId, EmployeeAddedEvent, AddNewEmployeeSubscriber>()
+                .AddSubscribers (typeof(AllEventsSubscriber))
                 .Configure(c => c.IsAsynchronousSubscribersEnabled = true)
-                .AddAspNetCoreMetadataProviders();
+                .Configure(c => c.ThrowSubscriberExceptions = true)
+                .SubscribeToRabbitMq(
+                    RabbitMqConfiguration.With(new Uri(rabbitMqConnection),
+                        true, 5, "eventflow"))
+                
+                .AddAspNetCore ();
 
             containerBuilder.Populate(services);
             var container = containerBuilder.Build();
-             
-          
+
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var subscriber = scope.Resolve<IRabbitMqSubscriber>();
+                var configuration = scope.Resolve<IRabbitMqConfiguration>();
+                var domainEventPublisher = scope.Resolve<IDomainEventPublisher>();
+                subscriber.SubscribeAsync(configuration.Exchange, configuration.Exchange + "Queue", EventFlowOptionsRabbitMqExtensions.Listen,
+                    domainEventPublisher, cancellationToken: CancellationToken.None).Wait();
+            }
+           
+            var _tenantIndex = new ElasticSearchIndex(elasticSearchUrl);
+            _tenantIndex.CreateIndex("employeeindex", elasticSearchUrl);
+            services.AddSingleton(_tenantIndex.ElasticClient);
             return new AutofacServiceProvider(container);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env )
         {
-           
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseHsts();
-            }
 
+            app.UseDeveloperExceptionPage(); 
             app.UseSwagger();
             app.UseSwaggerUI(x =>
             {
@@ -93,10 +117,13 @@ namespace EventFlowApi.Read
 
             });
 
-            app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-            app.UseHttpsRedirection();
-            app.UseMiddleware<CommandPublishMiddleware>();
-            app.UseMvcWithDefaultRoute();
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()); 
+         
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+                    {
+                        endpoints.MapControllers();
+                    });
            
         }
     }

@@ -3,6 +3,7 @@ using EventFlow.Queries;
 using EventFlowApi.Core.Aggregates.Commands;
 using EventFlowApi.Core.Aggregates.Entities;
 using EventFlowApi.Core.Aggregates.Queries;
+using EventFlowApi.Core.ReadModels;
 using EventFlowApi.Dto;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -15,7 +16,7 @@ namespace EventFlowApi.Controllers
 {
     /// <summary>Employee api, collection of all related operations</summary>
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController] 
     public class EmployeeController : BaseController
     {
         /// <summary>employee api cons.</summary>
@@ -61,12 +62,13 @@ namespace EventFlowApi.Controllers
         {
             var id = Guid.NewGuid().ToString();
             var employeeId = new EmployeeId("employee-" + id);
-            var employeeRecord  = new Employee(employeeId, request.FirstName, request.LastName,"");
+            var employeeRecord  = new Employee(employeeId, request.FirstName, request.LastName);
             var employeeCommand = new EmployeeAddCommand(employeeId, employeeRecord);
 
             await CommandBus.PublishAsync(employeeCommand, CancellationToken.None).ConfigureAwait(false);
-
-            return employeeId;
+            
+            return  employeeId;
+            
            
         }
     }

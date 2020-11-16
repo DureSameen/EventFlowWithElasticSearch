@@ -13,14 +13,13 @@ namespace EventFlowApi.Core.Aggregates.Locator
 
             switch (aggregateEvent)
             {
+              
                 case EmployeeAddedEvent employeeRecordAddedEvent:
                     yield return employeeRecordAddedEvent.EmployeeRecord.Id.Value;
                     break;
 
-                case TransactionAddedEvent transactionRecordAddedEvent:
-                    yield return transactionRecordAddedEvent.Transaction.Id.Value;
-                    break;
-                
+
+
             }
         }
     }

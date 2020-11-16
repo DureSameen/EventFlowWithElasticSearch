@@ -8,7 +8,6 @@ using EventFlow.AspNetCore.Extensions;
 using EventFlow.AspNetCore.Middlewares;
 using EventFlow.Autofac.Extensions;
 using EventFlow.Configuration;
-using EventFlow.Elasticsearch.Extensions;
 using EventFlow.Extensions;
 using EventFlow.RabbitMQ;
 using EventFlow.RabbitMQ.Extensions;
@@ -23,12 +22,13 @@ using EventFlowApi.Core;
 using EventFlowApi.Core.Aggregates.Entities;
 using EventFlowApi.Core.Aggregates.Locator;
 using EventFlowApi.Core.Aggregates.Queries;
+using EventFlowApi.Core.ReadModels;
 using EventFlowApi.Infrastructure;
 using EventFlowApi.EventStore.Extensions;
-using EventFlowApi.Core.MetadataProviders;
-using EventFlowApi.ElasticSearch.ReadModels;
-using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.OpenApi.Models;
 using Nest;
+using EventFlow.Elasticsearch.Extensions;
+using EventFlowApi.ElasticSearch.Index;
 
 namespace EventFlowApi
 {
@@ -42,18 +42,19 @@ namespace EventFlowApi
         public IConfiguration Configuration { get; }
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
-        {
+        {   services.AddControllers();
             services.AddSwaggerGen(x =>
             {
-                x.SwaggerDoc("v1", new Info { Title = "Eventflow Demo - API", Version = "v1" });
+                x.SwaggerDoc("v1", new OpenApiInfo { Title = "Eventflow Demo - API", Version = "v1" });
                 x.OperationFilter<SwaggerAuthorizationHeaderParameterOperationFilter>();
-                x.DescribeAllEnumsAsStrings();
+                 
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             ContainerBuilder containerBuilder = new ContainerBuilder();
             string rabbitMqConnection = Environment.GetEnvironmentVariable("RABBITMQCONNECTION");
-            string elasticSearchUrl = Environment.GetEnvironmentVariable("ELASTICSEARCHURL");  
+             string elasticSearchUrl = Environment.GetEnvironmentVariable("ELASTICSEARCHURL");
+ 
             Uri node = new Uri(elasticSearchUrl);
             ConnectionSettings settings = new ConnectionSettings(node);
 
@@ -63,36 +64,28 @@ namespace EventFlowApi
             EventFlowOptions.New
                 .UseAutofacContainerBuilder(containerBuilder)
                 .AddDefaults(typeof(Employee).Assembly)
-                .ConfigureElasticsearch(() => elasticClient)
                 .ConfigureEventStore()
+                .ConfigureElasticsearch(() => elasticClient)
                 .PublishToRabbitMq(
                     RabbitMqConfiguration.With(new Uri(rabbitMqConnection),
                         true, 5, "eventflow"))
                 .RegisterServices(sr => sr.Register<IScopedContext, ScopedContext>(Lifetime.Scoped))
                 .RegisterServices(sr => sr.RegisterType(typeof(EmployeeLocator)))
-                .RegisterServices(sr => sr.Register<IScopedContext, ScopedContext>(Lifetime.Scoped))
-                .RegisterServices(sr => sr.RegisterType(typeof(EmployeeLocator)))
                 .UseElasticsearchReadModel<EmployeeReadModel, EmployeeLocator>()
-                .UseElasticsearchReadModel<TransactionReadModel, EmployeeLocator>()
-                
-                .AddAspNetCoreMetadataProviders();
+                .RegisterServices(sr => sr.RegisterType(typeof(TransactionLocator)))
+                .UseElasticsearchReadModel<TransactionReadModel, TransactionLocator>()
+                 .AddAspNetCore ();
 
             containerBuilder.Populate(services);
-
+            var _tenantIndex = new ElasticSearchIndex(elasticSearchUrl);
+            _tenantIndex.CreateIndex("employeeindex", elasticSearchUrl);
+            services.AddSingleton(_tenantIndex.ElasticClient);
             return new AutofacServiceProvider(containerBuilder.Build());
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env )
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseHsts();
-            }
-
+            app.UseDeveloperExceptionPage(); 
             app.UseSwagger();
             app.UseSwaggerUI(x =>
             {
@@ -100,15 +93,13 @@ namespace EventFlowApi
 
             });
 
-            app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-            app.UseHttpsRedirection();
-            app.UseMiddleware<CommandPublishMiddleware>();
-            app.UseMvcWithDefaultRoute();
-            //app.UseForwardedHeaders(new ForwardedHeadersOptions
-            //{
-            //    ForwardedHeaders = ForwardedHeaders.XForwardedFor |
-            //                       ForwardedHeaders.XForwardedProto
-            //});
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()); 
+           
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+                    {
+                        endpoints.MapControllers();
+                    });
         }
     }
 }
