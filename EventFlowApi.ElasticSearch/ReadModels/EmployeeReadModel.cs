@@ -6,11 +6,11 @@ using EventFlowApi.Core.Aggregates.Events;
 using Nest;
 
 namespace EventFlowApi.ElasticSearch.ReadModels
-{ 
+{
+    
     public class EmployeeReadModel : IReadModel, IAmReadModelFor<EmployeeAggregate, EmployeeId, EmployeeAddedEvent>
     {
-        [Keyword(
-            Index = true)]
+         
         public string TenantId { get; set; }
         public string Id { get;   set; }
         public string FirstName { get;   set; }

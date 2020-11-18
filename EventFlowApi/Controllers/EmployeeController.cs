@@ -3,7 +3,6 @@ using EventFlow.Queries;
 using EventFlowApi.Core.Aggregates.Commands;
 using EventFlowApi.Core.Aggregates.Entities;
 using EventFlowApi.Core.Aggregates.Queries;
-using EventFlowApi.Core.ReadModels;
 using EventFlowApi.Dto;
 using Microsoft.AspNetCore.Mvc;
 using System;

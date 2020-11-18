@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Elasticsearch.Net;
-using EventFlowApi.Core.ReadModels;
+using EventFlowApi.ElasticSearch.ReadModels;
 using Nest;
 
 namespace EventFlowApi.ElasticSearch.Index
@@ -41,7 +41,7 @@ namespace EventFlowApi.ElasticSearch.Index
 
             if (!IndexExists(indexName, client))
             {
-                var createIndexResponse = client.Indices.Create (indexName);
+                var createIndexResponse = client.CreateIndex (indexName);
                                                              
    
                 if (!createIndexResponse.ApiCall.Success)
@@ -53,7 +53,7 @@ namespace EventFlowApi.ElasticSearch.Index
 
             private bool IndexExists(string name, IElasticClient client)
             {
-                var aliasResponse = client.Indices.Exists  (name);
+                var aliasResponse = client.IndexExists  (name);
 
                 return aliasResponse.Exists;
 

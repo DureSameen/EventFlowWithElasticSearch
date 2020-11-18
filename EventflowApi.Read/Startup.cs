@@ -30,10 +30,11 @@ using EventFlowApi.Core.Aggregates.Entities;
 using EventFlowApi.Core.Aggregates.Events;
 using EventFlowApi.Core.Aggregates.Locator;
 using EventFlowApi.Core.Aggregates.Queries;
-using EventFlowApi.Core.ReadModels;
+
 using EventFlowApi.ElasticSearch.QueryHandler;
 using Microsoft.OpenApi.Models;
 using EventFlowApi.ElasticSearch.Index;
+using EventFlowApi.ElasticSearch.ReadModels;
 
 namespace EventFlowApi.Read
 {

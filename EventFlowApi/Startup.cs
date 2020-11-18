@@ -22,13 +22,13 @@ using EventFlowApi.Core;
 using EventFlowApi.Core.Aggregates.Entities;
 using EventFlowApi.Core.Aggregates.Locator;
 using EventFlowApi.Core.Aggregates.Queries;
-using EventFlowApi.Core.ReadModels;
 using EventFlowApi.Infrastructure;
 using EventFlowApi.EventStore.Extensions;
 using Microsoft.OpenApi.Models;
 using Nest;
 using EventFlow.Elasticsearch.Extensions;
 using EventFlowApi.ElasticSearch.Index;
+using EventFlowApi.ElasticSearch.ReadModels;
 
 namespace EventFlowApi
 {

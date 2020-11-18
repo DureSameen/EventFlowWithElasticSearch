@@ -11,8 +11,7 @@ namespace EventFlowApi.ElasticSearch.ReadModels
 { 
     public class TransactionReadModel : IReadModel, IAmReadModelFor<TransactionAggregate, TransactionId, TransactionAddedEvent>
     {
-        [Keyword(
-            Index = true)]
+         
         public string TenantId { get; set; }
         public string TransactionId { get; set; }
         public string EmployeeId { get; set; }

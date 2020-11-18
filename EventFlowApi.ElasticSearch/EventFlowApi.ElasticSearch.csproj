@@ -5,8 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EventFlow.Elasticsearch" Version="0.79.4216" />
-    <PackageReference Include="NEST" Version="7.9.0" />
+    <PackageReference Include="EventFlow.Elasticsearch" Version="0.80.4377" />
   </ItemGroup>
 
   <ItemGroup>

@@ -24,7 +24,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="EventFlow" Version="0.79.4216" />
+    <PackageReference Include="EventFlow" Version="0.80.4377" />
     <PackageReference Include="RabbitMQ.Client" Version="6.2.1" />
   </ItemGroup>
 </Project>
