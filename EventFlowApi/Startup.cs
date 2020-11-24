@@ -57,7 +57,8 @@ namespace EventFlowApi
  
             Uri node = new Uri(elasticSearchUrl);
             ConnectionSettings settings = new ConnectionSettings(node);
-
+            var dataRetrieval = new DataRetrieval()
+            { Enabled = true };
             settings.DisableDirectStreaming();
 
             ElasticClient elasticClient = new ElasticClient(settings);
@@ -74,6 +75,7 @@ namespace EventFlowApi
                 .UseElasticsearchReadModel<EmployeeReadModel, EmployeeLocator>()
                 .RegisterServices(sr => sr.RegisterType(typeof(TransactionLocator)))
                 .UseElasticsearchReadModel<TransactionReadModel, TransactionLocator>()
+                .ConfigureDataRetrieval(dataRetrieval, typeof(EmployeeReadModel).Assembly)
                  .AddAspNetCore ();
 
             containerBuilder.Populate(services);
